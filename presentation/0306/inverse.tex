@@ -1,0 +1,801 @@
+\documentclass[dvipdfmx]{beamer}
+\usetheme{metropolis}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{tikz}
+% \usepackage{gnuplot-lua-tikz}
+\usepackage{empheq}
+\usepackage{ulem}
+\usepackage{amsmath, amsthm}
+\usepackage{mathtools}
+\usepackage{cases}
+\usepackage{ascmac}
+\usepackage{bbm}
+\usepackage{ulem}
+\usepackage{capt-of}
+\usepackage{caption}
+\usepackage{siunitx}
+\usefonttheme{professionalfonts} 
+\setbeamertemplate{navigation symbols}{} 
+\setbeamertemplate{footline}[frame number]
+\captionsetup[figure]{labelformat=empty}
+
+% \theoremstyle{definition}
+% \newtheorem{dfn}{Definition}
+% \newtheorem{thm}{Theorem}
+% \newtheorem{prop}{Proposition}
+% \newtheorem{cor}{Corollary}
+
+\theoremstyle{remark}
+\newtheorem*{rem*}{Remark}
+
+% \numberwithin{equation}{section}
+
+%---------------------------------- mytitle---------------------------------------
+\title{ポテンシャル逆問題の新たな設定と\\バブリング法による数値計算}
+\date{}
+% \author{\textsf{守田龍平}}
+\author{\underline{守田龍平} \and 今川真城 \and 磯祐介}
+\institute{京都大学大学院情報学研究科先端数理科学専攻}
+%=============================================================================
+%=============================================================================
+\begin{document}
+
+\begin{frame}
+  \maketitle
+\end{frame}
+
+\begin{frame}{研究の概要}
+  % \footnote{佐々木晶，『惑星内部構造』，地震，61巻特集号，2009, 285-296.}
+  \underline{ポテンシャルは重力に代わる観測量になるのでは？}
+
+  観測面$\partial B_a$上で観測するとき，$\Omega$の形状回復への影響を調べる．
+  \begin{figure}
+    \centering
+    \begin{tikzpicture}
+      \filldraw [fill=black!8!] (0,0)circle[radius=1.7];
+      \filldraw [fill=black!30!] (-0,0)circle[x radius=0.7,y radius=0.5,rotate=30];
+      \draw(0,0.3)node[right]{$\Omega$};
+      \draw(0.4,0.9)node[right]{$B_R$};
+      \draw(2.2,-0.4)node[right]{$\partial B_a$};
+      \draw[<->](0,0)--({1.7*cos(-20)},{1.7*sin(-20)});
+      \draw[<->](0,0)--(-2.4,0);
+      \draw (1.2,-0.7)node{$R$};
+      \draw (-2,-0.2)node{$a$};
+      \fill (0,0) circle (1pt); 
+      \draw[dotted] (0,0)circle[radius=2.4];
+    \end{tikzpicture}
+    \captionsetup[figure]{labelformat=empty,labelsep=none}
+    \caption{二層モデルの推定}
+  \end{figure}
+
+
+\end{frame}
+
+\begin{frame}{二層モデル}
+
+  領域$B_R$上の二層構造物体のポテンシャル$U$は次の通り．
+  \begin{align*}
+    U(x) = \underset{U^{B_R}}{\underline{\int_{B_R}E(x-y)dy}} + \rho\underset{U^{\Omega}}{\underline{\int_{\Omega}E(x-y)dy}}
+  \end{align*}
+  但し，$E$はLaplace方程式の基本解である． 
+
+  ポテンシャル$\rho U^{\Omega}$は$\partial B_a$上で計算可能である．
+  \begin{align*}
+    \rho U^{\Omega} = U\text{(観測値)} - U^{B_R}(\text{既知})\quad \mathrm{on}\quad \partial B_a.
+  \end{align*}
+
+  \begin{columns}
+    \centering 
+    \begin{column}{0.48\textwidth}
+      \centering
+      \begin{tikzpicture}
+        \filldraw [fill=black!10!] (0,0)circle[radius=1.0];
+        \filldraw [fill=black!30!] (-0,0)circle[x radius=0.5,y radius=0.4,rotate=30];
+        \draw(0,0)node{$\rho+1$};
+        \draw(0,0.6)node{$\Omega$};
+        % \draw[<->](0,0)--(-0.6,0);
+        % \draw[<->](0,0)--({1.6*cos(-20)},{1.6*sin(-20)});
+        \draw (0.4,-0.6)node{$1$};
+        \draw (0,1.2)node{$B_R$};
+        % \fill (0,0) circle (1pt); 
+      \end{tikzpicture}
+      \captionof{figure}{二層構造をもつ物体}
+    \end{column} 
+    \hspace{-2cm}
+    $\rightarrow$
+    % \hspace{-1cm}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \begin{tikzpicture}
+        \filldraw [fill=black!0!] (0,0)circle[radius=1.0];
+        \filldraw [fill=black!20!] (-0,0)circle[x radius=0.5,y radius=0.4,rotate=30];
+        \draw[dotted] (0,0)circle[radius=1.5];
+        \draw(-0,0)node{$\rho$};
+        \draw(0,0.6)node{$\Omega$};
+        % \draw[<->](0,0)--(-0.6,0);
+        % \draw[<->](0,0)--({1.6*cos(-20)},{1.6*sin(-20)});
+        \draw (0,1.2)node{$B_R$};
+        \draw (1.6,0.9)node{$\partial B_a$};
+        % \fill (0,0) circle (1pt); 
+      \end{tikzpicture}
+      \captionof{figure}{埋蔵物体の影響を取り出す}
+    \end{column}
+
+  \end{columns}
+
+\end{frame}
+
+
+
+\begin{frame}{測地学のポテンシャル逆問題 新たな設定}
+  観測面$\partial B_a$で観測し，領域$\Omega$の形状を回復する．
+  \begin{figure}
+    \centering
+    \begin{tikzpicture}
+      \filldraw [fill=black!0!] (0,0)circle[radius=1.0];
+      \filldraw [fill=black!20!] (-0,0)circle[x radius=0.4,y radius=0.3,rotate=30];
+      \draw[dotted] (0,0)circle[radius=1.5];
+      \draw(-0,0)node{$\Omega$};
+      % \draw[<->](0,0)--(-0.6,0);
+      % \draw[<->](0,0)--({1.6*cos(-20)},{1.6*sin(-20)});
+      \draw (0.4,-0.6)node{$B_R$};
+      \draw (1.6,-0.9)node{$\partial B_a$};
+      % \fill (0,0) circle (1pt); 
+    \end{tikzpicture}
+  \end{figure}
+
+  従来設定と新規設定を比較する．
+  \begin{itemize}
+    \item 重力観測（従来）
+    \[
+      \rho\nabla U^{\Omega} = \overrightarrow{g} \quad \mathrm{on} \quad \partial B_a
+    \]
+  
+    \item ポテンシャル観測（新規）
+    \[
+      \rho U^{\Omega} = p \quad \mathrm{on} \quad \partial B_a
+    \]
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{数値計算概要}
+  実際は有限個の地点$\{A_n\}_{n=1}^N\subset\partial B_a$で観測する．
+  \begin{itemize}
+    \item 重力観測
+    \[
+      \rho\nabla U^{\Omega} = \overrightarrow{g} \quad \mathrm{on} \quad \{A_n\}_{n=1}^N\subset \partial B_a
+    \]
+  
+    \item ポテンシャル観測
+    \[
+      \rho U^{\Omega} = p \quad \mathrm{on} \quad \{A_n\}_{n=1}^N\subset \partial B_a
+    \]
+  \end{itemize}
+  領域回復のアルゴリズムは次の2つのアルゴリズムから成る．
+
+  \begin{enumerate}
+    \item 質点系による近似 → 最適化法
+    \item 質量の均一化 → バブリング法
+  \end{enumerate}
+  \ 
+\end{frame}
+
+\begin{frame}{数値計算概要}
+  実際は有限個の地点$\{A_n\}_{n=1}^N\subset\partial B_a$で観測する．
+  \begin{itemize}
+    \item 重力観測
+    \[
+      \rho\nabla U^{\Omega} = \overrightarrow{g} \quad \mathrm{on} \quad \{A_n\}_{n=1}^N\subset \partial B_a
+    \]
+  
+    \item ポテンシャル観測
+    \[
+      \rho U^{\Omega} = p \quad \mathrm{on} \quad \{A_n\}_{n=1}^N\subset \partial B_a
+    \]
+  \end{itemize}
+  領域回復のアルゴリズムは次の2つのアルゴリズムから成る．
+
+  \begin{enumerate}
+    \item \uwave{質点系による近似 → 最適化法}
+    \item 質量の均一化 → バブリング法
+  \end{enumerate}
+  \ 
+\end{frame}
+
+
+
+\begin{frame}{質点系による近似 重力観測}
+
+  観測点を$\{A_n\}_{n=1}^N\subset \partial B_a$とする．
+  \begin{figure}
+    \centering
+    \begin{tikzpicture}
+      \filldraw [fill=black!0!] (0,0)circle[radius=1.0];
+      \filldraw [fill=black!20!] (-0,0)circle[x radius=0.4,y radius=0.3,rotate=30];
+      \draw[dotted] (0,0)circle[radius=1.5];
+      \draw(-0,0)node{$\Omega$};
+      % \draw[<->](0,0)--(-0.6,0);
+      % \draw[<->](0,0)--({1.6*cos(-20)},{1.6*sin(-20)});
+      \draw (0.4,-0.6)node{$B_R$};
+      \draw (1.6,-0.9)node{$A_n$};
+      % \fill (0,0) circle (1pt); 
+      \fill ({1.5*cos(0)},{1.5*sin(0}) circle (3pt); 
+      \fill ({1.5*cos(40)},{1.5*sin(40}) circle (3pt); 
+      \fill ({1.5*cos(80)},{1.5*sin(80}) circle (3pt); 
+      \fill ({1.5*cos(120)},{1.5*sin(120}) circle (3pt); 
+      \fill ({1.5*cos(160)},{1.5*sin(160}) circle (3pt); 
+      \fill ({1.5*cos(200)},{1.5*sin(200)}) circle (3pt); 
+      \fill ({1.5*cos(240)},{1.5*sin(240}) circle (3pt); 
+      \fill ({1.5*cos(280)},{1.5*sin(280}) circle (3pt); 
+      \fill ({1.5*cos(320)},{1.5*sin(320}) circle (3pt); 
+    \end{tikzpicture}
+  \end{figure}
+
+  質点の系を$(X,M)=(X_1,\dots X_K, M_1,\dots M_K)$で表す．
+  コスト関数$J_G$を以下のように定め，最小化する．
+  \begin{gather*}
+    J_G(X, M) = \frac{1}{N}\sum_{n=1}^N\left|\rho\nabla U^{\Omega}(A_n) - G_K(A_n;X,M)\right|^2,\\ 
+    \quad G_K(A_n;X,M) = \frac{1}{4\pi}\sum_{k=1}^K\frac{M_k(A_n-X_k)}{|A_n-X_k|^3}
+  \end{gather*}
+\end{frame}
+
+\begin{frame}{質点系による近似 ポテンシャル観測}
+  観測点を$\{A_n\}_{n=1}^N\subset \partial B_a$とする．
+  \begin{figure}
+    \centering
+    \begin{tikzpicture}
+      \filldraw [fill=black!0!] (0,0)circle[radius=1.0];
+      \filldraw [fill=black!20!] (-0,0)circle[x radius=0.4,y radius=0.3,rotate=30];
+      \draw[dotted] (0,0)circle[radius=1.5];
+      \draw(-0,0)node{$\Omega$};
+      % \draw[<->](0,0)--(-0.6,0);
+      % \draw[<->](0,0)--({1.6*cos(-20)},{1.6*sin(-20)});
+      \draw (0.4,-0.6)node{$B_R$};
+      \draw (1.6,-0.9)node{$A_n$};
+      % \fill (0,0) circle (1pt); 
+      \fill ({1.5*cos(0)},{1.5*sin(0}) circle (3pt); 
+      \fill ({1.5*cos(40)},{1.5*sin(40}) circle (3pt); 
+      \fill ({1.5*cos(80)},{1.5*sin(80}) circle (3pt); 
+      \fill ({1.5*cos(120)},{1.5*sin(120}) circle (3pt); 
+      \fill ({1.5*cos(160)},{1.5*sin(160}) circle (3pt); 
+      \fill ({1.5*cos(200)},{1.5*sin(200)}) circle (3pt); 
+      \fill ({1.5*cos(240)},{1.5*sin(240}) circle (3pt); 
+      \fill ({1.5*cos(280)},{1.5*sin(280}) circle (3pt); 
+      \fill ({1.5*cos(320)},{1.5*sin(320}) circle (3pt); 
+    \end{tikzpicture}
+  \end{figure}
+
+  質点の系を$(X,M)=(X_1,\dots X_K, M_1,\dots M_K)$で表す．
+  コスト関数$J_P$を以下のように定め，最小化する．
+  \begin{gather*}
+    J_P(X, M) = \frac{1}{N}\sum_{n=1}^N\left|\rho U^{\Omega}(A_n) - P_K(A_n;X,M)\right|^2, \\
+    P_K(A_n;X,M) = \frac{1}{4\pi}\sum_{k=1}^K \frac{M_k}{|A_n-X_k|}
+  \end{gather*}
+\end{frame}
+
+
+
+\begin{frame}{数値計算概要}
+  実際は有限個の地点$\{A_n\}_{n=1}^N\subset\partial B_a$で観測する．
+  \begin{itemize}
+    \item 重力観測
+    \[
+      \rho\nabla U^{\Omega} = \overrightarrow{g} \quad \mathrm{on} \quad \{A_n\}_{n=1}^N\subset \partial B_a
+    \]
+  
+    \item ポテンシャル観測
+    \[
+      \rho U^{\Omega} = p \quad \mathrm{on} \quad \{A_n\}_{n=1}^N\subset \partial B_a
+    \]
+  \end{itemize}
+  領域回復のアルゴリズムは次の2つのアルゴリズムから成る．
+
+  \begin{enumerate}
+    \item 質点系による近似 → 最適化法
+    \item \uwave{質量の均一化 → バブリング法}
+  \end{enumerate}
+  \ 
+\end{frame}
+
+
+
+
+\begin{frame}{バブリング法 (Partial Mass Scattering)}
+  質点の系を密度$\rho$の物体に均す．
+
+  領域$B_{R}$を幅$h$のメッシュで切り，
+  質点$(X_k,M_k)$を最近傍格子点$\widetilde{X}_k=(ih, jh)$に移動する．
+  $\widetilde{M}_{i,j}=M_k$とする．
+
+  $\Delta \widetilde{M}_{i,j} = \widetilde{M}_{i,j}-\rho h^2 > \varepsilon$のとき，
+  \begin{gather*}
+    \widetilde{M}_{i,j}^{(1)}=\rho h^2-\varepsilon, \\
+    \widetilde{M}_{i\pm 1,j}^{(1)}=\widetilde{M}_{i\pm 1,j}+\frac{1}{4}(\Delta \widetilde{M}_{i,j}+\varepsilon),\quad
+    \widetilde{M}_{i,j\pm 1}^{(1)}=\widetilde{M}_{i,j\pm 1}+\frac{1}{4}(\Delta \widetilde{M}_{i,j}+\varepsilon)\quad
+  \end{gather*}
+  として更新する．
+  \begin{columns}
+    \centering 
+    \begin{column}{0.48\textwidth}
+      \centering
+        \begin{tikzpicture}
+          \draw [dotted,thin] (-1.25,-1.25) grid [step=1] (1.25,1.25);
+          \fill [red] (0,0) circle (3pt); 
+          \draw (0.35,0.40) circle (3pt); 
+          \fill (0.35,0.40) circle (2pt); 
+
+          \fill (1,0) circle (3pt);
+          \fill (1,1) circle (3pt);
+          \fill (0,1) circle (3pt);
+          \fill (-1,1) circle (3pt);
+          \fill (-1,0) circle (3pt);
+          \fill (-1,-1) circle (3pt);
+          \fill (0,-1) circle (3pt);
+          \fill (1,-1) circle (3pt);
+
+          \draw(0.7,0.7)node{$M_{i,j}$};
+          \draw[->](0.25,0.30)--(0.1,0.1);
+        \end{tikzpicture}
+        \captionof{figure}{格子点に移動}
+    \end{column} 
+    \hspace{-1cm}
+
+    \hspace{-1cm}
+    \begin{column}{0.48\textwidth}
+      \centering
+        \begin{tikzpicture}
+          \draw [dotted,thin] (-1.25,-1.25) grid [step=1] (1.25,1.25);
+          \fill [red] (0,0) circle (3pt); 
+          \fill [blue] (-1,0) circle (3pt); 
+          \fill [blue] (1,0) circle (3pt); 
+          \fill [blue] (0,1) circle (3pt); 
+          \fill [blue] (0,-1) circle (3pt); 
+
+          \fill (1,1) circle (3pt); 
+          \fill (1,-1) circle (3pt); 
+          \fill (-1,1) circle (3pt); 
+          \fill (-1,-1) circle (3pt); 
+
+          \draw(0.4,0.3)node{$\widetilde{M}_{i,j}$};
+          \draw[->](0.2,0)--(0.5,0);
+          \draw[->](0,0.2)--(0,0.5);
+          \draw[->](-0.2,0)--(-0.5,0);
+          \draw[->](0,-0.2)--(0,-0.5);
+        \end{tikzpicture}
+        \captionof{figure}{質量の拡散}
+    \end{column}
+
+  \end{columns}
+
+
+\end{frame}
+
+% \begin{frame}{数値計算 バブリング法の設定}
+  % 格子点$(ih,jh)$に乗っている質量を$\widetilde{M}_{i,j}$で表す．
+  % $\Delta \widetilde{M}_{i,j} = \widetilde{M}_{i,j}-\rho h^2 > \varepsilon$とき，
+  % \[
+    % \widetilde{M}_{i,j}^{(1)}=\rho h^2-\varepsilon
+  % \]
+  % で更新する．
+  % メッシュ幅$h$は$10^{-2}$，パラメータ$\varepsilon$は$10^{-5}$とした．
+  % \begin{figure}
+    % \begin{tikzpicture}
+      % \draw [dotted,thin] (-2.2,-2.2) grid (2.2,2.2);
+      % \fill (-2,2) circle (3pt); 
+      % \fill (-1,2) circle (3pt); 
+      % \fill (0,2) circle (3pt); 
+      % \fill (1,2) circle (3pt); 
+      % \fill (2,2) circle (3pt); 
+
+      % \fill (-2,1) circle (3pt); 
+      % \fill (-1,1) circle (3pt); 
+      % \fill (0,1) circle (3pt); 
+      % \fill (1,1) circle (3pt); 
+      % \fill (2,1) circle (3pt); 
+
+      % \fill (-2,0) circle (3pt); 
+      % \fill (-1,0) circle (3pt); 
+      % \fill (0,0) circle (3pt); 
+      % \fill (1,0) circle (3pt); 
+      % \fill (2,0) circle (3pt); 
+
+      % \fill (-2,-1) circle (3pt); 
+      % \fill (-1,-1) circle (3pt); 
+      % \fill (0,-1) circle (3pt); 
+      % \fill (1,-1) circle (3pt); 
+      % \fill (2,-1) circle (3pt); 
+
+      % \fill (-2,-2) circle (3pt); 
+      % \fill (-1,-2) circle (3pt); 
+      % \fill (0,-2) circle (3pt); 
+      % \fill (1,-2) circle (3pt); 
+      % \fill (2,-2) circle (3pt); 
+
+      % % \draw (1.8,1.3) circle (3pt); 
+      % % \fill (1.8,1.3) circle (2pt); 
+
+      % \fill [red] (2,1) circle (3pt); 
+      % \fill [red] (-1,-1) circle (3pt); 
+
+      % \fill [blue] (-2,-1) circle (3pt); 
+      % \fill [blue] (-1,-2) circle (3pt); 
+      % \fill [blue] (-1,0) circle (3pt); 
+      % \fill [blue] (0,-1) circle (3pt); 
+
+      % \fill [blue] (1,1) circle (3pt); 
+      % \fill [blue] (2,0) circle (3pt); 
+      % \fill [blue] (2,2) circle (3pt); 
+      % % \fill [blue] (3,1) circle (3pt); 
+
+      % \draw[->](-0.8,-1)--(-0.2,-1);
+      % \draw[->](-1.2,-1)--(-1.8,-1);
+      % \draw[->](-1,-0.8)--(-1,-0.2);
+      % \draw[->](-1,-1.2)--(-1,-1.8);
+
+      % \draw[-](2.2,1)--(2.4,1);
+      % \draw[->](1.8,1)--(1.2,1);
+      % \draw[->](2,1.2)--(2,1.8);
+      % \draw[->](2,0.8)--(2,0.2);
+    % \end{tikzpicture}
+    % \caption{バブリング法}
+  % \end{figure}
+% \end{frame}
+
+\begin{frame}{数値計算 目標の確認}
+  観測半径$a$を変えたとき，最適化法＋バブリング法による領域$\Omega$の形状回復への影響を調査する．
+  \begin{figure}
+    \centering
+    \begin{tikzpicture}
+      \filldraw [fill=black!20!] (-0,0)circle[x radius=0.7,y radius=0.5,rotate=30];
+      \draw(0,0.3)node[right]{$\Omega$};
+      \draw(2.1,1.6)node[right]{$A_n$};
+      \draw[<->](0,0)--(-1.2,0);
+      \draw[<->](0,0)--({2.6*cos(-20)},{2.6*sin(-20)});
+      \draw (-0.9,0)node[below]{$R$};
+      \draw (1.5,-0.8)node{$a$};
+      \fill (0,0) circle (1pt); 
+      \draw (0,0)circle[radius=1.2];
+      \draw[dotted] (0,0)circle[radius=2.6];
+
+      \fill ({2.6*cos(0)},{2.6*sin(0}) circle (3pt); 
+      \fill ({2.6*cos(40)},{2.6*sin(40}) circle (3pt); 
+      \fill ({2.6*cos(80)},{2.6*sin(80}) circle (3pt); 
+      \fill ({2.6*cos(120)},{2.6*sin(120}) circle (3pt); 
+      \fill ({2.6*cos(160)},{2.6*sin(160}) circle (3pt); 
+      \fill ({2.6*cos(200)},{2.6*sin(200)}) circle (3pt); 
+      \fill ({2.6*cos(240)},{2.6*sin(240}) circle (3pt); 
+      \fill ({2.6*cos(280)},{2.6*sin(280}) circle (3pt); 
+      \fill ({2.6*cos(320)},{2.6*sin(320}) circle (3pt); 
+    \end{tikzpicture}
+    \captionsetup[figure]{labelformat=empty,labelsep=none}
+    \caption{$A_n$で観測し，$\Omega\subset B_R$を回復する}
+  \end{figure}
+
+\end{frame}
+
+
+
+
+% \begin{frame}{円板の回復}
+  % 原点中心半径$1$の円板の回復を試みる．
+
+  % 質点の数$K=1$,観測点$N=3$とし，観測半径$R$を変えてその影響について数値計算する．
+  % 最適化にはNewton法を用いた．
+  % コスト関数$J_P, J_G$を$0$とする$(X_1,M_1)$が存在し，いずれの場合も$X_1=0, M_1=\pi$に限られている．
+
+  % \begin{figure}
+    % \centering
+    % \begin{tikzpicture}
+      % \filldraw [fill=black!10!] (0,0) circle [radius=0.5];
+      % \fill (0,0) circle (1pt); 
+      % \draw[dotted] (0,0)circle[radius=1];
+      % \draw[<->](0,0)--(-1,0);
+      % \draw[<->](0,0)--({2*cos(-20)},{2*sin(-20)});
+      % \draw(1.5,0)node[below]{$R$};
+      % \draw(-0.7,0)node[above]{$r_0$};
+      % \draw (0,0)circle[radius=2];
+      % \fill (2,0) circle (3pt); 
+      % \fill ({2*cos(0)},{2*sin(0}) circle (3pt); 
+      % \fill ({2*cos(120)},{2*sin(120}) circle (3pt); 
+      % \fill ({2*cos(240)},{2*sin(240}) circle (3pt); 
+    % \end{tikzpicture}
+  % \end{figure}
+
+% \end{frame}
+
+
+
+\begin{frame}{数値計算例：楕円形のコアの回復}
+  $R=2$とする．
+  長半径$\sqrt{2}$,短半径$1$,密度$\rho=10$の楕円の回復を試みる．
+  観測器の分解能は$10^{-4}$とする．
+
+  最適化にはLevenberg-Marquardt法を用いた．
+
+  \begin{figure}
+    \centering
+    \begin{tikzpicture}
+      % \filldraw[fill=black!10!] ({-0.25*sqrt(3)},-0.25) -- ++(0:{0.5*sqrt(3)}) -- ++(120:{0.5*sqrt(3)}) -- cycle;
+      \filldraw [fill=black!10!] (0,0)circle[x radius=0.707,y radius=0.5,rotate=0];
+      \fill (0,0) circle (1pt); 
+      \draw (0,0)circle[radius=1];
+      \draw[<->](0,0)--(-1,0);
+      \draw[<->](0,0)--({2*cos(-10)},{2*sin(-10)});
+      \draw(1.5,0)node{$a$};
+      \draw(-0.3,0)node[above]{$R$};
+      \draw[dotted] (0,0)circle[radius=2];
+      \fill (2,0) circle (3pt); 
+      \fill ({2*cos(0)},{2*sin(0}) circle (3pt); 
+      \fill ({2*cos(20)},{2*sin(20}) circle (3pt); 
+      \fill ({2*cos(40)},{2*sin(40}) circle (3pt); 
+      \fill ({2*cos(60)},{2*sin(60}) circle (3pt); 
+      \fill ({2*cos(80)},{2*sin(80}) circle (3pt); 
+      \fill ({2*cos(100)},{2*sin(100}) circle (3pt); 
+      \fill ({2*cos(120)},{2*sin(120}) circle (3pt); 
+      \fill ({2*cos(140)},{2*sin(140}) circle (3pt); 
+      \fill ({2*cos(160)},{2*sin(160}) circle (3pt); 
+      \fill ({2*cos(180)},{2*sin(180}) circle (3pt); 
+      \fill ({2*cos(200)},{2*sin(200}) circle (3pt); 
+      \fill ({2*cos(220)},{2*sin(220}) circle (3pt); 
+      \fill ({2*cos(240)},{2*sin(240}) circle (3pt); 
+      \fill ({2*cos(260)},{2*sin(260}) circle (3pt); 
+      \fill ({2*cos(280)},{2*sin(280}) circle (3pt); 
+      \fill ({2*cos(300)},{2*sin(300}) circle (3pt); 
+      \fill ({2*cos(320)},{2*sin(320}) circle (3pt); 
+      \fill ({2*cos(340)},{2*sin(340}) circle (3pt); 
+    \end{tikzpicture}
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}{数値計算例：楕円形のコアの回復 重力観測}
+  質点数$K=100$,観測点数$N=300$とする．
+  $a$は観測半径である．
+
+  \begin{columns}
+    \begin{column}{0.38\columnwidth}
+      \centering
+      \includegraphics[width=4cm]{fig/elliptic.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{厳密解}
+    \end{column}
+    \hspace{-1cm}
+    \begin{column}{0.38\columnwidth}
+      \centering
+      \includegraphics[width=4cm]{fig2/GN300K100R10E2.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{$a=10$}
+    \end{column}
+  \end{columns}
+
+  \begin{columns}
+    \begin{column}{0.38\columnwidth}
+      \centering
+      \includegraphics[width=4cm]{fig2/GN300K100R30E2.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{$a=30$}
+    \end{column}
+    \hspace{-1cm}
+    \begin{column}{0.38\columnwidth}
+      \centering
+      \includegraphics[width=4cm]{fig2/GN300K100R100E2.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{$a=100$}
+    \end{column}
+  \end{columns}
+
+
+\end{frame}
+
+\begin{frame}{数値計算例：楕円形のコアの回復 ポテンシャル観測}
+  質点数$K=100$,観測点数$N=300$とする．
+  $a$は観測半径である．
+
+  \begin{columns}
+    \begin{column}{0.38\columnwidth}
+      \setcounter{figure}{5}
+      \centering
+      \includegraphics[width=4cm]{fig/elliptic.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{厳密解}
+    \end{column}
+    \hspace{-1cm}
+    \begin{column}{0.38\columnwidth}
+      \setcounter{figure}{9}
+      \centering
+      \includegraphics[width=4cm]{fig2/PN300K100R10E2.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{$a=10$}
+    \end{column}
+  \end{columns}
+
+  \begin{columns}
+    \begin{column}{0.38\columnwidth}
+      \centering
+      \includegraphics[width=4cm]{fig2/PN300K100R30E2.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{$a=30$}
+    \end{column}
+    \hspace{-1cm}
+    \begin{column}{0.38\columnwidth}
+      \centering
+      \includegraphics[width=4cm]{fig2/PN300K100R100E2.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{$a=100$}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+
+\begin{frame}{結論}
+
+  ポテンシャル逆問題において，境界でポテンシャルを既知とする問題設定を行い，重力を既知とする場合と比較した．
+
+  \begin{itemize}
+
+    \item 楕円形のコアの回復
+
+    重力観測と比べてポテンシャル観測の方がよりよい回復が望める．
+  \end{itemize}
+
+  \begin{figure}
+    \centering
+    \begin{tikzpicture}
+      % \filldraw[fill=black!10!] ({-0.25*sqrt(3)},-0.25) -- ++(0:{0.5*sqrt(3)}) -- ++(120:{0.5*sqrt(3)}) -- cycle;
+      \filldraw [fill=black!10!] (0,0)circle[x radius=0.707,y radius=0.5,rotate=0];
+      \fill (0,0) circle (1pt); 
+      \draw (0,0)circle[radius=1];
+      \draw[<->](0,0)--(-1,0);
+      \draw[<->](0,0)--({2*cos(-10)},{2*sin(-10)});
+      \draw(1.5,0)node{$a$};
+      \draw(-0.3,0)node[above]{$R$};
+      \draw[dotted] (0,0)circle[radius=2];
+      \fill (2,0) circle (3pt); 
+      \fill ({2*cos(0)},{2*sin(0}) circle (3pt); 
+      \fill ({2*cos(20)},{2*sin(20}) circle (3pt); 
+      \fill ({2*cos(40)},{2*sin(40}) circle (3pt); 
+      \fill ({2*cos(60)},{2*sin(60}) circle (3pt); 
+      \fill ({2*cos(80)},{2*sin(80}) circle (3pt); 
+      \fill ({2*cos(100)},{2*sin(100}) circle (3pt); 
+      \fill ({2*cos(120)},{2*sin(120}) circle (3pt); 
+      \fill ({2*cos(140)},{2*sin(140}) circle (3pt); 
+      \fill ({2*cos(160)},{2*sin(160}) circle (3pt); 
+      \fill ({2*cos(180)},{2*sin(180}) circle (3pt); 
+      \fill ({2*cos(200)},{2*sin(200}) circle (3pt); 
+      \fill ({2*cos(220)},{2*sin(220}) circle (3pt); 
+      \fill ({2*cos(240)},{2*sin(240}) circle (3pt); 
+      \fill ({2*cos(260)},{2*sin(260}) circle (3pt); 
+      \fill ({2*cos(280)},{2*sin(280}) circle (3pt); 
+      \fill ({2*cos(300)},{2*sin(300}) circle (3pt); 
+      \fill ({2*cos(320)},{2*sin(320}) circle (3pt); 
+      \fill ({2*cos(340)},{2*sin(340}) circle (3pt); 
+    \end{tikzpicture}
+  \end{figure}
+
+
+\end{frame}
+
+\begin{frame}[noframenumbering]{付録：初期値依存}
+  質点数$K=100$,観測点数$N=300$とする．
+  $a$は観測半径である．
+
+  \begin{columns}
+    \begin{column}{0.38\columnwidth}
+      \centering
+      \includegraphics[width=4cm]{fig/elliptic.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{厳密解}
+    \end{column}
+    \hspace{-1cm}
+    \begin{column}{0.38\columnwidth}
+      \centering
+      \includegraphics[width=4cm]{fig/GN300K100R4E2.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{$a=4$}
+    \end{column}
+  \end{columns}
+
+  \begin{columns}
+    \begin{column}{0.38\columnwidth}
+      \centering
+      \includegraphics[width=4cm]{fig/GN300K100R10E2.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{$a=10$}
+    \end{column}
+    \hspace{-1cm}
+    \begin{column}{0.38\columnwidth}
+      \centering
+      \includegraphics[width=4cm]{fig/GN300K100R30E2.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{$a=30$}
+    \end{column}
+  \end{columns}
+
+
+\end{frame}
+
+\begin{frame}[noframenumbering]{付録：初期値依存}
+  質点数$K=100$,観測点数$N=300$とする．
+  $a$は観測半径である．
+
+  \begin{columns}
+    \begin{column}{0.38\columnwidth}
+      \setcounter{figure}{5}
+      \centering
+      \includegraphics[width=4cm]{fig/elliptic.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{厳密解}
+    \end{column}
+    \hspace{-1cm}
+    \begin{column}{0.38\columnwidth}
+      \setcounter{figure}{9}
+      \centering
+      \includegraphics[width=4cm]{fig/PN300K100R4E2.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{$a=4$}
+    \end{column}
+  \end{columns}
+
+  \begin{columns}
+    \begin{column}{0.38\columnwidth}
+      \centering
+      \includegraphics[width=4cm]{fig/PN300K100R10E2.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{$a=10$}
+    \end{column}
+    \hspace{-1cm}
+    \begin{column}{0.38\columnwidth}
+      \centering
+      \includegraphics[width=4cm]{fig/PN300K100R30E2.png}
+      \captionsetup[figure]{labelformat=empty,labelsep=none}
+      \captionof{figure}{$a=30$}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+
+% \begin{frame}{参考文献}
+  % \begin{thebibliography}{99}
+    % \bibitem{An}
+    % G.Anger, 
+    % \textit{Inverse Problems in Differential Equations},
+    % Plenum Press,
+    % 1990.
+  
+  
+    % \bibitem{Kr}
+    % R.Kress,
+    % \textit{Numerical Analysis},
+    % Springer,
+    % 1998.
+  
+    % \bibitem{No}
+    % 野崎京三，
+    % 『原子時計をセンサーとした重力ポテンシャル計の可能性』，
+    % 応用地質技術年報，30号(2011)，65-71.
+  
+    % \bibitem{Sa}
+    % 佐々木晶，
+    % 『惑星内部構造』，
+    % 地震，61巻特集号(2009)，285-296.
+  
+  
+    % \bibitem{Za}
+    % L.Zalcman,
+    % Some Inverse Problems of Potential Theory,
+    % \textit{Contemporary Mathematics}, Vol.63(1987), 337-339.
+  
+    % \bibitem{Zi} 
+    % D.Zidarov, 
+    % \textit{Inverse Gravimetric Problem in Geoprospecting and Geodesy},
+    % Elsevier,
+    % 1990.
+  % \end{thebibliography}
+
+% \end{frame}
+
+\end{document}

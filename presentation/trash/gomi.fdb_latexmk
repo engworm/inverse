@@ -1,0 +1,29 @@
+# Fdb version 4
+["dvipdf"] 1677667312 "gomi.dvi" "gomi.pdf" "gomi" 1677667312 0
+  "gomi.dvi" 1677667312 448 b3c4adeb667fad91ba0789eb584c4ae9 "latex"
+  (generated)
+  "gomi.pdf"
+  (rewritten before read)
+["latex"] 1677667312 "/Users/engw/Documents/master/inverse/presentation/trash/gomi.tex" "gomi.dvi" "gomi" 1677667312 0
+  "/Users/engw/Documents/master/inverse/presentation/trash/gomi.tex" 1677667311 149 d38464ac598f390ed8ce00dfbc0d96bc ""
+  "/usr/local/texlive/2022/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
+  "/usr/local/texlive/2022/texmf-dist/fonts/tfm/public/cm/cmr12.tfm" 1136768653 1288 655e228510b4c2a1abe905c368440826 ""
+  "/usr/local/texlive/2022/texmf-dist/fonts/tfm/public/cm/cmr8.tfm" 1136768653 1292 21c1c5bfeaebccffdb478fd231a0997d ""
+  "/usr/local/texlive/2022/texmf-dist/fonts/tfm/public/cm/cmss12.tfm" 1136768653 1324 37b971caf729d7edd9cbb9f9b0ea76eb ""
+  "/usr/local/texlive/2022/texmf-dist/fonts/tfm/uptex-fonts/jis/upjisg-h.tfm" 1522271273 812 52bd92aa20c58a398601cda6dd62c8d1 ""
+  "/usr/local/texlive/2022/texmf-dist/fonts/tfm/uptex-fonts/jis/upjisg-v.tfm" 1522271273 536 5f2475e9deb198c23894800d3c5eed00 ""
+  "/usr/local/texlive/2022/texmf-dist/fonts/tfm/uptex-fonts/jis/upjisr-h.tfm" 1522271273 812 52bd92aa20c58a398601cda6dd62c8d1 ""
+  "/usr/local/texlive/2022/texmf-dist/fonts/tfm/uptex-fonts/jis/upjisr-v.tfm" 1522271273 536 5f2475e9deb198c23894800d3c5eed00 ""
+  "/usr/local/texlive/2022/texmf-dist/tex/latex/l3backend/l3backend-dvips.def" 1673989714 36094 f50bbd0ac1e5d89f3bafd820930998cd ""
+  "/usr/local/texlive/2022/texmf-dist/tex/platex/jsclasses/jsarticle.cls" 1677126379 61387 1c16fa09f9aa344f6b7ed4a7e2c399b2 ""
+  "/usr/local/texlive/2022/texmf-dist/tex/platex/jsclasses/jslogo.sty" 1677126379 5585 8e4615c54073c390d14154b29cee89cb ""
+  "/usr/local/texlive/2022/texmf-dist/web2c/texmf.cnf" 1646502317 40171 cdab547de63d26590bebb3baff566530 ""
+  "/usr/local/texlive/2022/texmf-var/web2c/euptex/uplatex.fmt" 1677597299 7809508 321d36790253dd2e56ca5d9999baf41e ""
+  "/usr/local/texlive/2022/texmf.cnf" 1677597247 577 209b46be99c9075fd74d4c0369380e8c ""
+  "gomi.aux" 1677667312 141 b683841918b1cdfa2521080df93545d6 "latex"
+  "gomi.tex" 1677667311 149 d38464ac598f390ed8ce00dfbc0d96bc ""
+  (generated)
+  "gomi.aux"
+  "gomi.dvi"
+  "gomi.log"
+  (rewritten before read)
